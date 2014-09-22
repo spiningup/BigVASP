@@ -6,16 +6,23 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from myapp.models import Document
+import zipfile
+import xml.etree.ElementTree as ET
+from myapp.models import Document#, Vaspkeys
 from myapp.forms import DocumentForm
+#from myapp.extract_vasp import extract_xml
+from myapp.extract_vasp import int_names, float_names, string_names, logical_names, array_names, varray_names
 
 def list(request):
     # Handle file upload
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            newdoc = Document(docfile = request.FILES['docfile'])
-            newdoc.save()
+            filename = request.FILES['docfile']
+            if zipfile_is_valid(filename):
+                fields = extract_xml(filename)
+                newdoc = Document(docfile = filename, **fields)
+                newdoc.save()
 
             # Redirect to the document list after POST
             return HttpResponseRedirect(reverse('myapp.views.list'))
@@ -31,4 +38,41 @@ def list(request):
         {'documents': documents, 'form': form},
         context_instance=RequestContext(request)
     )
+
+def zipfile_is_valid(filename):
+    if zipfile.is_zipfile(filename):
+        filehandler = zipfile.ZipFile(filename, 'r')
+        archive = filehandler.namelist()
+        if "vasprun.xml" in archive:
+            return True
+    return False
+    
+
+def extract_xml(filename):
+    filehandler = zipfile.ZipFile(filename, 'r')
+    vaspxml = filehandler.open('vasprun.xml', 'r')
+    tree = ET.parse(vaspxml)
+    root = tree.getroot()
+
+    allnames = int_names + float_names + string_names + logical_names
+    fields = {}
+    for name in int_names:
+        result = root.findall(".//*[@name='%s']"%(name))
+        fields[name] = int(result[0].text)
+    for name in float_names:
+        result = root.findall(".//*[@name='%s']"%(name))
+        fields[name] = float(result[0].text)
+    for name in string_names:
+        result = root.findall(".//*[@name='%s']"%(name))
+        fields[name] = result[0].text
+    for name in logical_names:
+        result = root.findall(".//*[@name='%s']"%(name))
+        txt = result[0].text.replace(' ', '')
+        if txt == 'T':
+            fields[name] = True
+        elif txt == 'F':
+            fields[name] = False
+
+    return fields
+
 
