@@ -6,17 +6,6 @@
 	</head>
 
 	<body>
-		<!-- List of uploaded documents -->
-		{% if documents %}
-			<ul>
-			{% for document in documents %}
-				<li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
-			{% endfor %}
-			</ul>
-		{% else %}
-			<p>No documents.</p>
-		{% endif %}
-
 		<!-- Upload form. Note enctype attribute! -->
 		<form action="{% url "list" %}" method="post" enctype="multipart/form-data">
 			{% csrf_token %}
@@ -28,6 +17,32 @@
 			</p>
 			<p><input type="submit" value="Upload" /></p>
 		</form>
+
+		{% if documents %}
+                    <table>
+                        <tr>
+                            <th>Energy</th>
+                            <th>Volume</th>
+    			<th>ENCUT</th>
+    			<th>Efermi</th>
+    			<th>Doc</th>
+                        </tr>
+    
+                        {% for document in documents %}
+                        <tr> 
+                            <td>{{ document.e_wo_entrp }}</td>
+                            <td>{{ document.volume }}</td>
+    			<td>{{ document.ENCUT }}</td>
+    			<td>{{ document.efermi }}</td>
+    			<td><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                        <p>No documents.</p>
+                {% endif %}
+		  
+
 		
 	</body>
 
