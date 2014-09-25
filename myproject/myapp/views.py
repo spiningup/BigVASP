@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 
 import zipfile
 import xml.etree.ElementTree as ET
+from fractions import gcd
 from myapp.models import Document#, Vaspkeys
 from myapp.forms import DocumentForm
 #from myapp.extract_vasp import extract_xml
@@ -72,6 +73,35 @@ def extract_xml(filename):
             fields[name] = True
         elif txt == 'F':
             fields[name] = False
+
+    # get chemical formula
+    name = 'atomtypes'
+    result = root.findall(".//*[@name='%s']"%(name))[0].getiterator('set')[0]
+
+    formuladict = {}
+    for item in result:
+        atomname = item[1].text.replace(' ', '')
+        natoms = int(item[0].text)
+        formuladict[atomname] = natoms
+    formulalist = sorted(formuladict.items(), key=lambda x: x[0])
+
+    # get number of formula unit
+    ncell = formulalist[0][1]
+    if len(formulalist) > 1:
+        for i in range(1, len(formulalist)):
+            ncell = gcd(ncell, formulalist[i][1])
+
+    formula = ""
+    reducedformula = ""
+    natoms = 0
+    for i in formulalist:
+        formula += i[0] + str(i[1])
+        reducedformula += i[0] + str(i[1] / ncell)
+        natoms += i[1]
+
+    fields['natoms'] = natoms
+    fields['ncell'] = ncell
+    fields['reducedformula'] = reducedformula
 
     return fields
 

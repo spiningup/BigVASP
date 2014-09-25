@@ -21,6 +21,9 @@
 		{% if documents %}
                     <table>
                         <tr>
+			    <th>Formula</th>
+			    <th>Ncell</th>
+			    <th>Natoms</th>
                             <th>Energy</th>
                             <th>Volume</th>
     			<th>ENCUT</th>
@@ -30,6 +33,9 @@
     
                         {% for document in documents %}
                         <tr> 
+			    <td>{{ document.reducedformula }}</td>
+			    <td>{{ document.ncell }}</td>
+			    <td>{{ document.natoms }}</td>
                             <td>{{ document.e_wo_entrp }}</td>
                             <td>{{ document.volume }}</td>
     			<td>{{ document.ENCUT }}</td>

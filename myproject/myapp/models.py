@@ -64,6 +64,9 @@ class Document(models.Model):
     EVENONLYGW = models.BooleanField(default=False)
     LVDW = models.BooleanField(default=False)
 
+    natoms = models.IntegerField(null=True)
+    ncell = models.IntegerField(null=True)
+    reducedformula = models.CharField(max_length=50, null=True)
 #    for name in int_names:
 #        globals()[name] = models.IntegerField()
 #    for name in float_names:
