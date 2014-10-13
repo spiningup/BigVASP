@@ -40,7 +40,7 @@ def signin(request):
         else:
             ctx = {}
             ctx['form'] = signin_form()
-            return render(request, 'authsys/login.html', ctx)
+            return render(request, 'authsys/signin.html', ctx)
 
 
 def signout(request):
