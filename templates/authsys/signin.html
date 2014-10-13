@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Authentication</title>
+</head>
+<body>
+	<div class="wrapper">
+		<form method="post" action="{% url 'signin' %}">
+			{% csrf_token %}
+			<input type="text" name="email" placeholder="email" required>
+			<input type="password" name="password" placeholder="password" required>
+			<button type="submit">Sign In</button>
+		</form>
+	</div>
+</body>
+</html>
