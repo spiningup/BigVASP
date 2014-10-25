@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.shortcuts import render_to_response
@@ -15,6 +15,8 @@ from uploader.forms import DocumentForm
 from uploader.extract_vasp import int_names, float_names, string_names, logical_names, array_names, varray_names
 
 def list(request):
+    if not request.user.is_authenticated():
+        return redirect(reverse('signin'))
     # Handle file upload
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)

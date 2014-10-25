@@ -9,7 +9,10 @@ from authsys.forms import signin_form
 
 
 def index(request):
-    return redirect(reverse('signin'))
+    if request.user.is_authenticated():
+        return redirect(reverse('list'))
+    else:
+        return redirect(reverse('signin'))
 
 
 def signin(request):
@@ -17,7 +20,7 @@ def signin(request):
     SignIn View
     """
     if request.user.is_authenticated():
-        return redirect('/admin')
+        return redirect(reverse('list'))
     else:
         if request.method == 'POST':
             form = signin_form(request.POST or None)
@@ -27,16 +30,16 @@ def signin(request):
                 try:
                     user = User.objects.get(email=email)
                 except:
-                    return redirect('/')
+                    return redirect(reverse('signin'))
                 if user.is_active:
                     user_auth = authenticate(username=email, password=password)
                     if user_auth is not None:
                         login(request, user_auth)
-                        return redirect('/')
+                        return redirect(reverse('list'))
                     else:
-                        return redirect('/')
+                        return redirect(reverse('signin'))
             else:
-                return redirect('/')
+                return redirect(reverse('signin'))
         else:
             ctx = {}
             ctx['form'] = signin_form()
@@ -48,4 +51,4 @@ def signout(request):
     SignOut View
     """
     logout(request)
-    return redirect('/')
+    return redirect(reverse('signin'))
