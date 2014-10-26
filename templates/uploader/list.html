@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Minimal Django File Upload Example</title>	
+	</head>
+
+	<body>
+		<!-- Upload form. Note enctype attribute! -->
+		<form action="{% url "list" %}" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			<p>{{ form.non_field_errors }}</p>
+			<p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+			<p>
+				{{ form.docfile.errors }}
+				{{ form.docfile }}
+			</p>
+			<p><input type="submit" value="Upload" /></p>
+		</form>
+
+		{% if documents %}
+                    <table>
+                        <tr>
+			    <th>Formula</th>
+			    <th>Ncell</th>
+			    <th>Natoms</th>
+                            <th>Energy</th>
+                            <th>Volume</th>
+    			<th>ENCUT</th>
+    			<th>Efermi</th>
+    			<th>Doc</th>
+                        </tr>
+    
+                        {% for document in documents %}
+                        <tr> 
+			    <td>{{ document.reducedformula }}</td>
+			    <td>{{ document.ncell }}</td>
+			    <td>{{ document.natoms }}</td>
+                            <td>{{ document.e_wo_entrp }}</td>
+                            <td>{{ document.volume }}</td>
+    			<td>{{ document.ENCUT }}</td>
+    			<td>{{ document.efermi }}</td>
+    			<td><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                        <p>No documents.</p>
+                {% endif %}
+		  
+
+		
+	</body>
+
+</html> 

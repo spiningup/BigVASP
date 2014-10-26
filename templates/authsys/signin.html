@@ -1,0 +1,21 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Authentication</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="{% static 'css/signin.css' %}">
+</head>
+<body>
+	<div class="wrapper">
+		<form method="post" action="{% url 'signin' %}" class="form-signin">
+			{% csrf_token %}
+	        <h2 class="form-signin-heading">Please sign in</h2>
+			<input type="text" class="form-control" name="email" placeholder="email" required autofocus>
+			<input type="password" class="form-control" name="password" placeholder="password" required>
+			<button type="submit" class="btn btn-lg btn-primary btn-block">Sign In</button>
+		</form>
+	</div>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+</html>

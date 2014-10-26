@@ -1,5 +1,3 @@
-*.sqlite3
-
 # Created by https://www.gitignore.io
 
 ### Python ###
@@ -117,3 +115,8 @@ $RECYCLE.BIN/
 
 # KDE directory preferences
 .directory
+=======
+venv
+virtualenv
+*.pyc
+
