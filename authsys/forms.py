@@ -1,12 +1,6 @@
 from django import forms
 from authsys.models import User
-from django.contrib.auth.forms import UserCreationForm
-
-
-class signin_form(forms.Form):
-    email = forms.EmailField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Email'}))
-
-    password = forms.CharField(max_length=32, widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 class signup_form(UserCreationForm):
@@ -23,3 +17,25 @@ class signup_form(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class AuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(AuthenticationForm, self).__init__(*args, **kwargs)
+
+        self.fields['username'].widget.attrs.update({
+                u'maxlength': '100',
+                u'class': 'form-control',
+                u'type': 'username',
+                u'placeholder': 'Username',
+                u'required': '',
+                u'autofocus': ''
+            })
+
+        self.fields['password'].widget.attrs.update({
+                u'max_length': '32',
+                u'class': 'form-control',
+                u'type': 'password',
+                u'placeholder': 'Password',
+                u'required':''
+            })
