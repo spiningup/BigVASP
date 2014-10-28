@@ -1,9 +1,8 @@
 from django import forms
 from authsys.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib import auth
 
-
-class signup_form(UserCreationForm):
+class signup_form(auth.forms.UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
@@ -19,7 +18,7 @@ class signup_form(UserCreationForm):
         return user
 
 
-class AuthenticationForm(AuthenticationForm):
+class AuthenticationForm(auth.forms.AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(AuthenticationForm, self).__init__(*args, **kwargs)
 
@@ -39,3 +38,12 @@ class AuthenticationForm(AuthenticationForm):
                 u'placeholder': 'Password',
                 u'required':''
             })
+
+    def clean(self, *args, **kwargs):
+        ''' Override form authentication by checking if the field contains an
+        email address instead of a username'''
+        user_email = User.objects.filter(email=self.cleaned_data.get('username'))
+        if user_email.exists():
+            self.cleaned_data['username'] = user_email.first().username
+
+        return super(AuthenticationForm, self).clean(*args, **kwargs)
